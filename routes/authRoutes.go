@@ -60,6 +60,18 @@ func AuthRoutes(r *gin.Engine) {
 			})
 		}
 
+		// Finally we create a session for the user and we return it in a Cookie HttpOnly
+		session, err := services.CreateNewSession(authUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error creating new session",
+			})
+		}
+
+		// Set cookie HTTPOnly with the session token / Expires now + 7 days
+		c.SetCookie("session_token", session.SessionToken, 60*60*24*7, "/", "localhost", false, true)
+		c.SetCookie("session_expires", session.Expires.String(), 60*60*24*7, "/", "localhost", false, true)
+		c.SetCookie("session_id", session.ID, 60*60*24*7, "/", "localhost", false, true)
 		// Return user data as JSON
 		c.JSON(http.StatusOK, authUser)
 	})
