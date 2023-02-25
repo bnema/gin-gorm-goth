@@ -6,6 +6,7 @@ import (
 	"go-gorm-gauth/services"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
@@ -67,11 +68,11 @@ func AuthRoutes(r *gin.Engine) {
 				"message": "Error creating new session",
 			})
 		}
-
-		// Set cookie HTTPOnly with the session token / Expires now + 7 days
-		c.SetCookie("session_token", session.SessionToken, 60*60*24*7, "/", "localhost", false, true)
-		c.SetCookie("session_expires", session.Expires.String(), 60*60*24*7, "/", "localhost", false, true)
-		c.SetCookie("session_id", session.ID, 60*60*24*7, "/", "localhost", false, true)
+		expirationDuration := session.Expires.Sub(time.Now())
+		expirationSeconds := int(expirationDuration.Seconds())
+		// Set cookie HTTPOnly with the session token / Expires now + 7 days (60*60*24*7)
+		c.SetCookie("session_token", session.SessionToken, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
+		c.SetCookie("session_id", session.ID, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
 		// Return user data as JSON
 		c.JSON(http.StatusOK, authUser)
 	})
