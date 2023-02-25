@@ -36,6 +36,28 @@ func AuthRoutes(r *gin.Engine) {
 		gothic.BeginAuthHandler(c.Writer, c.Request)
 
 	})
+	// Logout route (delete session from database and delete cookie)
+	auth.GET("/logout", func(c *gin.Context) {
+		// Get the session token from the cookie
+		sessionToken, err := c.Cookie("session_token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error getting session token from cookie",
+			})
+		}
+		// Delete the session from the database
+		err = services.DeleteSession(sessionToken)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error deleting session from database",
+			})
+		}
+		// Delete the cookie
+		c.SetCookie("session_token", "", -1, "/", (os.Getenv("DOMAIN")), true, true)
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Logged out",
+		})
+	})
 
 	auth.GET("/callback", func(c *gin.Context) {
 		// Complete authentication process

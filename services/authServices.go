@@ -171,6 +171,53 @@ func GetSessionByToken(tokenString string) (*models.Session, error) {
 	return session, nil
 }
 
+func DeleteSession(sessionToken string) error {
+	// Verify the JWT token
+	_, err := verifyJWT(sessionToken)
+	if err != nil {
+		fmt.Println("Error verifying JWT token:", err)
+		return err
+	} else {
+		// Export the claims from the JWT token
+		claims := jwt.MapClaims{}
+		_, err := jwt.ParseWithClaims(sessionToken, claims, func(token *jwt.Token) (interface{}, error) {
+
+			return []byte(os.Getenv("JWT_SECRET")), nil
+		})
+		if err != nil {
+			fmt.Println("Error parsing JWT token:", err)
+			return err
+		}
+
+		// Get the user ID from the claims
+		userID := claims["id"].(string)
+		// Get the session ID from the database
+		session := &models.Session{}
+
+		// Get the user from the database
+		user := &models.User{}
+		err = config.DB.Where("id = ?", userID).First(user).Error
+		if err != nil {
+			fmt.Println("Error getting user by id:", err)
+			// If no user is found with the specified ID, return an error
+			if err == gorm.ErrRecordNotFound {
+				return fmt.Errorf("User not found with id %s", userID)
+			}
+			return err
+		}
+
+		// Delete the session from the database where the user ID matches the user ID in the claims and the session token matches the session token in the request
+		err = config.DB.Where("user_id = ? AND session_token = ?", userID, sessionToken).Delete(session).Error
+		if err != nil {
+			fmt.Println("Error deleting session:", err)
+			return err
+		}
+
+		fmt.Println("Session deleted")
+		return nil
+	}
+}
+
 func GetAccountByProviderAccountID(providerAccountID string) (*models.Account, error) {
 	account := &models.Account{}
 	err := config.DB.Where("provider_account_id = ?", providerAccountID).First(account).Error
