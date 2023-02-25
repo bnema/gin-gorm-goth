@@ -3,7 +3,6 @@
 package routes
 
 import (
-	"fmt"
 	"go-gorm-gauth/services"
 	"net/http"
 	"os"
@@ -41,13 +40,25 @@ func AuthRoutes(r *gin.Engine) {
 		// Complete authentication process
 		authUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 		if err != nil {
-			fmt.Println(err)
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Error while authenticating",
 			})
 		}
 
-		services.CreateNewUser(authUser)
+		// Create new User and Account in the database
+		_, err = services.CreateNewUser(authUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error creating new user",
+			})
+		}
+
+		_, err = services.CreateNewAccount(authUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error creating new account",
+			})
+		}
 
 		// Return user data as JSON
 		c.JSON(http.StatusOK, authUser)

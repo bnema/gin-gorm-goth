@@ -12,26 +12,69 @@ import (
 	"gorm.io/gorm"
 )
 
-// This file handle all the authentication process
-// CreateUser, CreateAccount, CreateSession (for now)
-
-// Get the informations from goth.User and create a new user
-// Create a new user with the given auth user data
 func CreateNewUser(authUser goth.User) (*models.User, error) {
-	// check if we received a valid user
-	fmt.Println(authUser)
-	dbConn := config.DB
-	newID := cuid.New()
-	newUser := models.User{
-		ID:    newID,
+	user := &models.User{
+		ID:    cuid.New(),
 		Name:  authUser.Name,
 		Email: authUser.Email,
 		Image: authUser.AvatarURL,
 	}
-	if err := dbConn.Create(newUser).Error; err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return nil, err
-		}
+
+	err := config.DB.Create(user).Error
+	if err != nil {
+		fmt.Println("Error creating new user:", err)
+		return nil, err
 	}
-	return &newUser, nil
+
+	fmt.Println("New user created:", user.ID)
+	return user, nil
+}
+
+func CreateNewAccount(authUser goth.User) (*models.Account, error) {
+
+	// Check the email, retrieve user.id from database and push it to the account as UserID
+	userFromDB, err := GetUserByEmail(authUser.Email)
+	if err != nil {
+		fmt.Println("Error getting user by email:", err)
+		return nil, err
+	}
+
+	account := &models.Account{
+		ID:                cuid.New(),
+		UserID:            userFromDB.ID,
+		Provider:          authUser.Provider,
+		ProviderAccountID: authUser.UserID,
+		Type:              "oauth",
+		Scope:             "identify email",
+		TokenType:         "Bearer",
+		RefreshToken:      authUser.RefreshToken,
+		AccessToken:       authUser.AccessToken,
+		ExpiresAt:         authUser.ExpiresAt,
+	}
+
+	// Create the account in the database
+	err = config.DB.Create(account).Error
+	if err != nil {
+		fmt.Println("Error creating new account:", err)
+		return nil, err
+	}
+
+	fmt.Println("New account created:", account.ID)
+	return account, nil
+}
+
+func GetUserByEmail(email string) (*models.User, error) {
+	user := &models.User{}
+	err := config.DB.Where("email = ?", email).First(user).Error
+	if err != nil {
+		fmt.Println("Error getting user by email:", err)
+		// If no user is found with the specified email address, return an error
+		if err == gorm.ErrRecordNotFound {
+			return nil, fmt.Errorf("User not found with email %s", email)
+		}
+		return nil, err
+	}
+
+	fmt.Println("User found:", user.ID)
+	return user, nil
 }
