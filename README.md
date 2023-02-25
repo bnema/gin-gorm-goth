@@ -2,4 +2,19 @@
 A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user authentication 
 
 ## Description:
-This code provides a simple implementation of user authentication routes in a Go web application using the Gin web framework and the GORM ORM library. The "authRoutes.go" file defines the authentication routes and their actions. The "/auth" group of routes includes a simple message route and two routes for initiating and completing the authentication process. The "goth" package is used to handle the Discord authentication provider. Upon completion of the authentication process, the user's details are stored in the database, a session token is created and returned in an HTTP-only cookie, and a session ID is also returned. If any errors occur, appropriate error messages are returned with their corresponding HTTP status codes. This boilerplate provides a solid foundation for building user authentication systems in Go web applications.
+
+This is a boilerplate code for creating routes related to user authentication in a Go web application using the Gin framework and the GORM ORM library. The file "authRoutes.go" contains functions that define the authentication routes and their respective actions.
+
+The code defines a group of routes under the "/auth" prefix that can be accessed by users to authenticate themselves.
+
+The first route simply returns a JSON message indicating that it's the authentication route.
+
+The "/login" route is used to initiate the authentication process, where it sets the authentication providers (in this case, it uses the Discord provider) and starts the authentication process using the "gothic" package.
+
+The "/callback" route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID. The cookie is set to expire in 7 days. If any errors occur during these processes, appropriate error messages are returned as JSON responses with their corresponding HTTP status codes.
+
+Overall, this boilerplate provides a simple implementation of a user authentication system using a third-party authentication provider (in this case, Discord) and provides the necessary routes to initiate and complete the authentication process.
+
+## WIP
+
+- Check existing params
