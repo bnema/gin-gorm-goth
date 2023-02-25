@@ -73,7 +73,10 @@ func AuthRoutes(r *gin.Engine) {
 		// Set cookie HTTPOnly with the session token / Expires now + 7 days (60*60*24*7)
 		c.SetCookie("session_token", session.SessionToken, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
 		c.SetCookie("session_id", session.ID, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
-		// Return user data as JSON
-		c.JSON(http.StatusOK, authUser)
+
+		// Return a CODE 200 and message "Authentication successful"
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Authentication successful",
+		})
 	})
 }
