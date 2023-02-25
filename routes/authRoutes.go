@@ -54,6 +54,7 @@ func AuthRoutes(r *gin.Engine) {
 		}
 		// Delete the cookie
 		c.SetCookie("session_token", "", -1, "/", (os.Getenv("DOMAIN")), true, true)
+		c.SetCookie("session_id", "", -1, "/", (os.Getenv("DOMAIN")), true, true)
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Logged out",
 		})
