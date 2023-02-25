@@ -9,7 +9,6 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/discord"
-	"github.com/markbates/goth/providers/google"
 )
 
 func AuthRoutes(r *gin.Engine) {
@@ -26,7 +25,8 @@ func AuthRoutes(r *gin.Engine) {
 		// Set providers
 		goth.UseProviders(
 			discord.New(os.Getenv("DISCORD_CLIENT_ID"), os.Getenv("DISCORD_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
-			google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
+
+			// Other providers here...
 		)
 		// Start authentication process
 		gothic.BeginAuthHandler(c.Writer, c.Request)

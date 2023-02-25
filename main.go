@@ -9,13 +9,10 @@ import (
 var router = gin.Default()
 
 func getRoutes() {
-	// AuthRoutes(router)
-	routes.AuthRoutes(router)
-
+	routes.AuthRoutes(router) // Auth routes with Goth and Gothic middleware for Oauth2 authentication
 }
 
 func main() {
-
 	getRoutes()
 	router.Run(":3000")
 
