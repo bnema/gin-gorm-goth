@@ -121,37 +121,42 @@ func AuthRoutes(r *gin.Engine) {
 			return
 		}
 
-		// Create new User and Account in the database
-		_, err = services.CreateNewUser(authUser)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Error creating new user",
-			})
-		}
+		// If the user doesn't exist, we create a new user and a new account in the database
+		if userFromDB == nil {
 
-		_, err = services.CreateNewAccount(authUser)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Error creating new account",
-			})
-		}
+			// Create new User and Account in the database
+			_, err = services.CreateNewUser(authUser)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Error creating new user",
+				})
+			}
 
-		// Finally we create a session for the user and we return it in a Cookie HttpOnly
-		session, err := services.CreateNewSession(authUser)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Error creating new session",
-			})
-		}
-		expirationDuration := session.Expires.Sub(time.Now())
-		expirationSeconds := int(expirationDuration.Seconds())
-		// Set cookie HTTPOnly with the session token / Expires now + 7 days (60*60*24*7)
-		c.SetCookie("session_token", session.SessionToken, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
-		c.SetCookie("session_id", session.ID, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
+			_, err = services.CreateNewAccount(authUser)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Error creating new account",
+				})
+			}
 
-		// Return a CODE 200 and message "Authentication successful"
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Authentication successful",
-		})
+			// Finally we create a session for the user and we return it in a Cookie HttpOnly
+			session, err := services.CreateNewSession(authUser)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Error creating new session",
+				})
+			}
+			expirationDuration := session.Expires.Sub(time.Now())
+			expirationSeconds := int(expirationDuration.Seconds())
+			// Set cookie HTTPOnly with the session token / Expires now + 7 days (60*60*24*7)
+			c.SetCookie("session_token", session.SessionToken, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
+			c.SetCookie("session_id", session.ID, expirationSeconds, "/", (os.Getenv("DOMAIN")), false, true)
+
+			// Return a CODE 200 and message "Authentication successful"
+			c.JSON(http.StatusOK, gin.H{
+				"message": "Authentication successful",
+			})
+
+		}
 	})
 }
