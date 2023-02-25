@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-gorm-gauth/config"
 	"go-gorm-gauth/routes"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,9 @@ func getRoutes() {
 }
 
 func main() {
+
+	config.InitDB() // Initialize database connection
+
 	getRoutes()
 	router.Run(":3000")
 

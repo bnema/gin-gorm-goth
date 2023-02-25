@@ -1,6 +1,10 @@
+// Filename: authRoutes.go
+// This file contains the routes for the authentication process
 package routes
 
 import (
+	"fmt"
+	"go-gorm-gauth/services"
 	"net/http"
 	"os"
 
@@ -35,13 +39,17 @@ func AuthRoutes(r *gin.Engine) {
 
 	auth.GET("/callback", func(c *gin.Context) {
 		// Complete authentication process
-		user, err := gothic.CompleteUserAuth(c.Writer, c.Request)
+		authUser, err := gothic.CompleteUserAuth(c.Writer, c.Request)
 		if err != nil {
-			c.String(http.StatusUnauthorized, err.Error())
-			return
+			fmt.Println(err)
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Error while authenticating",
+			})
 		}
 
+		services.CreateNewUser(authUser)
+
 		// Return user data as JSON
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, authUser)
 	})
 }

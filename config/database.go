@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"go-gorm-gauth/models"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -21,7 +22,15 @@ func InitDB() {
 	}
 
 	DB = db
-	// If the connection is successful, the following message will be displayed
+
+	// Migrate the schema
+	migrateModels := db.AutoMigrate(&models.User{}, &models.Account{}, &models.Session{})
+	if migrateModels != nil {
+		panic(migrateModels)
+	} else {
+		fmt.Println("Database migration successful")
+	}
+
 	fmt.Println("Database connection successful")
 }
 

@@ -1,3 +1,5 @@
+// File: authModels.go
+// This file contains the models for the authentication process
 package models
 
 import "time"
