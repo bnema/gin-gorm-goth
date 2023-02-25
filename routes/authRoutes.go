@@ -77,6 +77,29 @@ func AuthRoutes(r *gin.Engine) {
 		} else if userFromDB != nil {
 			// Update the user and the account in the database
 			_, err = services.UpdateUser(userFromDB)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Error updating user",
+				})
+			}
+			// Get the account from the database
+			providerAccountID := authUser.UserID
+			account, err := services.GetAccountByProviderAccountID(providerAccountID)
+			// If the account already exists, we update it
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"message": "Error getting account",
+				})
+			} else {
+				_, err = services.UpdateAccount(account)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{
+						"message": "Error updating account",
+					})
+				}
+			}
+
 			// If the user already exists, we create a new session for him and we return it in a Cookie HttpOnly
 			session, err := services.CreateNewSession(authUser)
 			if err != nil {
