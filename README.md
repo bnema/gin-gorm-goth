@@ -3,11 +3,9 @@ A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user aut
 
 ## Description
 
-This is a boilerplate code for creating routes related to user authentication in a Go web application using the Gin framework and the GORM ORM library. 
+This is a boilerplate codebase created for learning purposes and heavily inspired by NextAuth. It provides basic RESTful API endpoints for user authentication and authorization, using Gin as the framework, GORM as the ORM, and Goth as the OAuth library (Discord is used as default Provider). The API supports CRUD operations for managing user accounts,authentication sessions and posts.
 
-The code defines a group of routes under the "/auth" prefix that can be accessed by users to authenticate themselves.
-
-The first route simply returns a JSON message indicating that it's the authentication route.
+## Routes
 
 The "/login" route is used to initiate the authentication process, where it sets the authentication providers (in this case, it uses the Discord provider) and starts the authentication process using the "gothic" package.
 
@@ -17,7 +15,7 @@ The "/logout" route is used to destroy the user's session and remove the session
 
 The "/blog" route return all the Posts in the database as JSON responses.
 
-The "/blog/:id" route returns a single Post in the database as a JSON response.
+The "/blog/:title" route returns a single Post in the database as a JSON response.
 
 The "/blog/admin" route is used to test the authentication process and the authMiddleware. It is only accessible to authenticated users AND if isAdmin is set to true. It returns a JSON response indicating that it's the admin route.
 
@@ -42,3 +40,11 @@ DISCORD_CLIENT_SECRET=client_secret
 AUTH_CALLBACK_URL=http://localhost:3000/auth/callback
 
 ```
+
+## Installation
+
+Clone the repository
+
+- Set up the environment variables by creating a .env file in the root directory and filling in the required variables (see the section on Env variables above).
+- Run `go mod download` to download the required packages.
+- Run `go run main.go` to start the application.
