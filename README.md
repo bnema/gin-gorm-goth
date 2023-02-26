@@ -1,5 +1,5 @@
 # gin-gorm-goth
-A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user authentication 
+A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user authentication (with Discord as provider)
 
 ## Description
 
@@ -13,6 +13,17 @@ The "/login" route is used to initiate the authentication process, where it sets
 
 The "/callback" route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID. The cookie is set to expire in 7 days. If any errors occur during these processes, appropriate error messages are returned as JSON responses with their corresponding HTTP status codes.
 
-## WIP
+## Env variables
 
-- Check existing params
+```
+GIN_MODE=debug
+DOMAIN=localhost
+PORT=3000
+DATABASE_URL=postgresql://yourname:yourpasswordE@yourPGserver:PORT/yourdb
+SESSION_SECRET=secret
+JWT_SECRET=secret
+DISCORD_CLIENT_ID=client_id
+DISCORD_CLIENT_SECRET=client_secret
+AUTH_CALLBACK_URL=http://localhost:3000/auth/callback
+
+```
