@@ -13,9 +13,17 @@ import (
 func BlogRoutes(r *gin.Engine) {
 	blog := r.Group("/blog")
 
+	// Public routes to view posts
 	blog.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Blog routes",
+		})
+	})
+
+	// Unique route to view a single post
+	blog.GET("/:id", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Blog post",
 		})
 	})
 
@@ -31,7 +39,7 @@ func BlogRoutes(r *gin.Engine) {
 			})
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "Unauthorized",
+				"error": "Not enough power to see beyond this path",
 			})
 		}
 	})
