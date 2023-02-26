@@ -5,12 +5,12 @@ package models
 import "time"
 
 type Post struct {
-	ID        string    `gorm:"primaryKey"`
-	UserID    string    `gorm:"index"`
+	ID string `gorm:"primaryKey"`
+	// Foreign key (UserID -> users.id)
+	UserID    string    `gorm:"index" binding:"required"`
 	Title     string    `gorm:"not null"`
 	Content   string    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"default:null"`
 	UpdatedAt time.Time `gorm:"default:null"`
 	DeletedAt time.Time `gorm:"default:null"`
-	User      User      `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }

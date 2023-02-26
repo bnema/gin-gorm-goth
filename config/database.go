@@ -24,7 +24,7 @@ func InitDB() {
 	DB = db
 
 	// Migrate the schema
-	migrateModels := db.AutoMigrate(&models.User{}, &models.Account{}, &models.Session{})
+	migrateModels := db.AutoMigrate(&models.User{}, &models.Account{}, &models.Session{}, &models.Post{})
 	if migrateModels != nil {
 		panic(migrateModels)
 	} else {

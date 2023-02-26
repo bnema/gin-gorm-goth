@@ -5,6 +5,7 @@ package services
 import (
 	"go-gorm-gauth/config"
 	"go-gorm-gauth/models"
+	"strings"
 	"time"
 
 	"github.com/lucsky/cuid"
@@ -18,9 +19,11 @@ func GetAllPosts() []models.Post {
 }
 
 // GetPostByID returns a single post by ID
-func GetPostByID(id string) models.Post {
+func GetPostByTitle(title string) models.Post {
+	// Transform _ to space
+	title = strings.ReplaceAll(title, "-", " ")
 	var post models.Post
-	config.DB.Where("id = ?", id).First(&post)
+	config.DB.Where("title = ?", title).First(&post)
 	return post
 }
 
@@ -51,7 +54,8 @@ func UpdatePost(id string, title string, content string, userID string) models.P
 }
 
 // DeletePost deletes a post in the database from the given ID
-func DeletePost(id string) {
+func DeletePost(id string, userID string) {
 	var post models.Post
-	config.DB.Where("id = ?", id).Delete(&post)
+	config.DB.Where("id = ? AND user_id = ?", id, userID).First(&post)
+	config.DB.Delete(&post)
 }
