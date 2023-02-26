@@ -7,11 +7,11 @@ This is a boilerplate codebase created for learning purposes and heavily inspire
 
 ## Routes
 
-The "/login" route is used to initiate the authentication process, where it sets the authentication providers (in this case, it uses the Discord provider) and starts the authentication process using the "gothic" package.
+The "/auth/login" route is used to initiate the authentication process, where it sets the authentication providers (in this case, it uses the Discord provider) and starts the authentication process using the "gothic" package.
 
-The "/callback" route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID.
+The "/auth/callback" route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID.
 
-The "/logout" route is used to destroy the user's session and remove the session cookie from the user's browser.
+The "/auth/logout" route is used to destroy the user's session and remove the session cookie from the user's browser.
 
 The "/blog" route return all the Posts in the database as JSON responses.
 
