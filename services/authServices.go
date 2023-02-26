@@ -267,6 +267,7 @@ func UpdateUser(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
+// With a user id, get the account from the database
 func GetAccountByUserID(userID string) (*models.Account, error) {
 	account := &models.Account{}
 	err := config.DB.Where("user_id = ?", userID).First(account).Error
@@ -283,6 +284,7 @@ func GetAccountByUserID(userID string) (*models.Account, error) {
 	return account, nil
 }
 
+// With an account id, get the account from the database
 func GetAccountByID(accountID string) (*models.Account, error) {
 	account := &models.Account{}
 	err := config.DB.Where("id = ?", accountID).First(account).Error
@@ -299,6 +301,7 @@ func GetAccountByID(accountID string) (*models.Account, error) {
 	return account, nil
 }
 
+// With a provider account id, check if the account exists
 func CheckIfAccountExists(providerAccountID string) bool {
 	account := &models.Account{}
 	err := config.DB.Where("provider_account_id = ?", providerAccountID).First(account).Error
@@ -315,6 +318,7 @@ func CheckIfAccountExists(providerAccountID string) bool {
 	return true
 }
 
+// With a user email, check if the user exists
 func CheckIfUserExists(email string) bool {
 	user := &models.User{}
 	err := config.DB.Where("email = ?", email).First(user).Error
@@ -322,11 +326,31 @@ func CheckIfUserExists(email string) bool {
 		fmt.Println("Error getting user by email:", err)
 		// If no user is found with the specified email, return false
 		if err == gorm.ErrRecordNotFound {
+			// Gracefully handle the error and log it
+			fmt.Println("User not found with email:", email)
 			return false
+
 		}
 		return false
 	}
 
 	fmt.Println("User found:", user.ID)
 	return true
+}
+
+// With a user ID, check if the user is an admin
+func CheckIfUserIsAdmin(userID string) bool {
+	user := &models.User{}
+	err := config.DB.Where("id = ?", userID).First(user).Error
+	if err != nil {
+		fmt.Println("Error getting user by id:", err)
+		// If no user is found with the specified id, return false
+		if err == gorm.ErrRecordNotFound {
+			return false
+		}
+		return false
+	}
+
+	fmt.Println("User found:", user.ID)
+	return user.IsAdmin
 }

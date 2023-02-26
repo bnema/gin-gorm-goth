@@ -69,13 +69,10 @@ func AuthRoutes(r *gin.Engine) {
 			})
 		}
 		// Check if the user already exist in the database
-		userFromDB, err := services.GetUserByEmail(authUser.Email)
+		userExist := services.CheckIfUserExists(authUser.Email)
 
 		// If the user already exists, we update it
-		if userFromDB != nil {
-			// Update the user and the account in the database
-			_, err = services.UpdateUser(userFromDB)
-
+		if userExist {
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"message": "Error updating user",
@@ -119,7 +116,7 @@ func AuthRoutes(r *gin.Engine) {
 		}
 
 		// If the user doesn't exist, we create a new user and a new account in the database
-		if userFromDB == nil {
+		if !userExist {
 
 			// Create new User and Account in the database
 			_, err = services.CreateNewUser(authUser)
