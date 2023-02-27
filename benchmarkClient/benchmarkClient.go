@@ -28,7 +28,7 @@ func main() {
 
 		// Send the request and measure the response time
 		start := time.Now()
-		resp, err := client.Do(req)
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			fmt.Println("Error sending request:", err)
 			return
@@ -52,4 +52,14 @@ func main() {
 
 	// Print the requests per second
 	fmt.Println("Requests per second:", 1000/average)
+
+	// Which translates to X users per minute
+	fmt.Println("Users per minute:", 1000/average*60)
+
+	// Which translates to X users per hour
+	fmt.Println("Users per hour:", 1000/average*60*60)
+
+	// Which translates to X users per day
+	fmt.Println("Users per day:", 1000/average*60*60*24)
+
 }

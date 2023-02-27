@@ -5,6 +5,7 @@ import (
 	"go-gorm-gauth/routes"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 var router = gin.Default()
@@ -16,7 +17,8 @@ func getRoutes() {
 }
 
 func main() {
-
+	// Set the maximum number of CPUs that can be executing simultaneously and the maximum number of idle CPUs.
+	// runtime.GOMAXPROCS(runtime.NumCPU())
 	config.InitDB() // Initialize database connection
 
 	getRoutes()
