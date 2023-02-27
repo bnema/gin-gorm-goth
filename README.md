@@ -3,7 +3,7 @@ A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user aut
 
 ## Description
 
-This is a boilerplate codebase created for learning purposes and heavily inspired by NextAuth. It provides basic RESTful API endpoints for user authentication and authorization, using Gin as web/http framework, GORM as the ORM, and Goth/Gothic as the Oauth2 client library. The API supports CRUD operations for managing user accounts,authentication sessions and posts.
+This is a boilerplate codebase created for learning purposes and heavily inspired by NextAuth. It provides basic RESTful API endpoints for user authentication and authorization, using Gin as web/http server library, GORM as the ORM, and Goth/Gothic as the Oauth2 client library. The API supports CRUD operations for managing user accounts,authentication sessions and posts.
 
 ## Routes
 

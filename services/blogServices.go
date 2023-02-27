@@ -39,28 +39,26 @@ func CreatePost(title string, content string, userID string) (models.Post, error
 		UpdatedAt: time.Now(),
 	}
 	// Handle errors gracefully
-	if post.Title == "" || post.Content == "" {
-		return post, fmt.Errorf("Title and content are required")
-	} else if post.UserID != userID {
-		return post, fmt.Errorf("You are not the owner of this post")
-	} else if post.UserID == "" {
-		return post, fmt.Errorf("You are not logged in")
+	if post.Title == "" {
+		return post, fmt.Errorf("Title is required")
+	} else if post.Content == "" {
+		return post, fmt.Errorf("Content is required")
+	} else if post.UserID != userID || post.UserID == "" {
+		return post, fmt.Errorf("Error creating post, verification failed")
 	}
+
 	config.DB.Create(&post)
 
 	return post, nil
 }
 
 // UpdatePost updates a post in the database from the given data (title, content and userID)
-// Also handle errors if the post doesn't exist
 func UpdatePost(id string, title string, content string, userID string) (models.Post, error) {
 	var post models.Post
 	config.DB.Where("id = ? AND user_id = ?", id, userID).First(&post)
 
-	if post.ID != id {
-		return post, fmt.Errorf("Post not found")
-	} else if post.UserID != userID {
-		return post, fmt.Errorf("You are not the owner of this post")
+	if post.UserID != userID || post.UserID == "" {
+		return post, fmt.Errorf("Error updating post, verification failed")
 	}
 
 	post.Title = title
@@ -71,15 +69,13 @@ func UpdatePost(id string, title string, content string, userID string) (models.
 	return post, nil
 }
 
-// DeletePost deletes a post in the database from the given ID
+// DeletePost deletes a post in the database from the given postID and userID
 func DeletePost(id string, userID string) error {
 	var post models.Post
 	config.DB.Where("id = ? AND user_id = ?", id, userID).First(&post)
 
-	if post.ID != id {
-		return fmt.Errorf("Post not found")
-	} else if post.UserID != userID {
-		return fmt.Errorf("You are not the owner of this post")
+	if post.UserID != userID || post.UserID == "" {
+		return fmt.Errorf("Error deleting post, verification failed")
 	}
 
 	config.DB.Delete(&post)
