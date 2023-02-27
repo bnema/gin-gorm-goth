@@ -70,6 +70,7 @@ func BlogRoutes(r *gin.Engine) {
 		}
 	})
 	// Update a post
+	// Update a post
 	blog.POST("/admin/updatepost", services.AuthMiddleware(), func(c *gin.Context) {
 		// Now we can access the user ID from the context (set in the AuthMiddleware)
 		userID := c.MustGet("userID").(string)
@@ -80,9 +81,16 @@ func BlogRoutes(r *gin.Engine) {
 			title := c.PostForm("title")
 			content := c.PostForm("content")
 			// Update a post
-			services.UpdatePost(id, title, content, userID)
+			post, err := services.UpdatePost(id, title, content, userID)
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
 			c.JSON(http.StatusOK, gin.H{
 				"message": "Post updated",
+				"post":    post,
 			})
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -100,7 +108,14 @@ func BlogRoutes(r *gin.Engine) {
 
 		if userIsAdmin {
 			// Delete a post
-			services.DeletePost(id, userID)
+			err := services.DeletePost(id, userID)
+			// If there is an error, return the message error from the service
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
 			c.JSON(http.StatusOK, gin.H{
 				"message": "Post deleted",
 			})

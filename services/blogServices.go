@@ -3,6 +3,7 @@ package services
 // Filename: blogServices.go
 // This file handle all the services for the blog (creating, updating and deleting posts)
 import (
+	"fmt"
 	"go-gorm-gauth/config"
 	"go-gorm-gauth/models"
 	"strings"
@@ -41,21 +42,50 @@ func CreatePost(title string, content string, userID string) models.Post {
 	return post
 }
 
+// This example doesnt handle errors
+// func UpdatePost(id string, title string, content string, userID string) models.Post; error {
+// 	var post models.Post
+// 	config.DB.Where("id = ?", id).First(&post)
+// 	post.Title = title
+// 	post.Content = content
+// 	post.UserID = userID
+// 	post.UpdatedAt = time.Now()
+// 	config.DB.Save(&post)
+// 	return post
+// }
+
 // UpdatePost updates a post in the database from the given data (title, content and userID)
-func UpdatePost(id string, title string, content string, userID string) models.Post {
+// Also handle errors if the post doesn't exist
+func UpdatePost(id string, title string, content string, userID string) (models.Post, error) {
 	var post models.Post
-	config.DB.Where("id = ?", id).First(&post)
+	config.DB.Where("id = ? AND user_id = ?", id, userID).First(&post)
+
+	if post.ID != id {
+		return post, fmt.Errorf("Post not found")
+	} else if post.UserID != userID {
+		return post, fmt.Errorf("You are not the owner of this post")
+	}
+
 	post.Title = title
 	post.Content = content
 	post.UserID = userID
 	post.UpdatedAt = time.Now()
 	config.DB.Save(&post)
-	return post
+	return post, nil
 }
 
 // DeletePost deletes a post in the database from the given ID
-func DeletePost(id string, userID string) {
+func DeletePost(id string, userID string) error {
 	var post models.Post
 	config.DB.Where("id = ? AND user_id = ?", id, userID).First(&post)
+
+	if post.ID != id {
+		return fmt.Errorf("Post not found")
+	} else if post.UserID != userID {
+		return fmt.Errorf("You are not the owner of this post")
+	}
+
 	config.DB.Delete(&post)
+	// Return nil if there is no error
+	return nil
 }
