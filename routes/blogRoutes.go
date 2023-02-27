@@ -59,18 +59,25 @@ func BlogRoutes(r *gin.Engine) {
 			title := c.PostForm("title")
 			content := c.PostForm("content")
 			// Create a new post
-			services.CreatePost(title, content, userID)
+			post, err := services.CreatePost(title, content, userID)
+			if err != nil {
+				c.JSON(http.StatusNotFound, gin.H{
+					"error": err.Error(),
+				})
+				return
+			}
 			c.JSON(http.StatusOK, gin.H{
 				"message": "Post created",
+				"post":    post,
 			})
+
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Not enough power to see beyond this path",
 			})
 		}
 	})
-	// Update a post
-	// Update a post
+	// Route to update a post
 	blog.POST("/admin/updatepost", services.AuthMiddleware(), func(c *gin.Context) {
 		// Now we can access the user ID from the context (set in the AuthMiddleware)
 		userID := c.MustGet("userID").(string)

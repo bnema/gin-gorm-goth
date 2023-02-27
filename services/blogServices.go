@@ -29,7 +29,7 @@ func GetPostByTitle(title string) models.Post {
 }
 
 // CreatePost creates a new post in the database from the given data (title, content and userID)
-func CreatePost(title string, content string, userID string) models.Post {
+func CreatePost(title string, content string, userID string) (models.Post, error) {
 	post := models.Post{
 		ID:        cuid.New(),
 		Title:     title,
@@ -38,21 +38,18 @@ func CreatePost(title string, content string, userID string) models.Post {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
+	// Handle errors gracefully
+	if post.Title == "" || post.Content == "" {
+		return post, fmt.Errorf("Title and content are required")
+	} else if post.UserID != userID {
+		return post, fmt.Errorf("You are not the owner of this post")
+	} else if post.UserID == "" {
+		return post, fmt.Errorf("You are not logged in")
+	}
 	config.DB.Create(&post)
-	return post
-}
 
-// This example doesnt handle errors
-// func UpdatePost(id string, title string, content string, userID string) models.Post; error {
-// 	var post models.Post
-// 	config.DB.Where("id = ?", id).First(&post)
-// 	post.Title = title
-// 	post.Content = content
-// 	post.UserID = userID
-// 	post.UpdatedAt = time.Now()
-// 	config.DB.Save(&post)
-// 	return post
-// }
+	return post, nil
+}
 
 // UpdatePost updates a post in the database from the given data (title, content and userID)
 // Also handle errors if the post doesn't exist
