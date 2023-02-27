@@ -1,3 +1,5 @@
+// WARNING: This snippet must be used in a new project. It will not work in the current project.
+
 package main
 
 import (
@@ -9,19 +11,18 @@ import (
 var counter int
 
 func main() {
-	counter := 1000
-	// Create a new HTTP client
-	client := &http.Client{}
-
+	counter = 1000
 	// Create new empty array to store the response times
 	var responseTimes []int64
 
-	// Send the requests and measure the response time
+	// Print starting message
+	fmt.Println("Please wait while", counter, "requests are sent...")
+	// Send 1000 GET requests to the /benchmark route
 	for i := 0; i < counter; i++ {
-		// Create a new GET request
-		req, err := http.NewRequest("GET", "http://localhost:3000/benchmark/test", nil)
+		// Create a new HTTP GET request
+		req, err := http.NewRequest("GET", "http://localhost:3000/benchmark", nil)
 		if err != nil {
-			fmt.Println("Erreur lors de la création de la requête:", err)
+			fmt.Println("Error creating request:", err)
 			return
 		}
 
@@ -29,14 +30,11 @@ func main() {
 		start := time.Now()
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Println("Erreur lors de l'envoi de la requête:", err)
+			fmt.Println("Error sending request:", err)
 			return
 		}
 		defer resp.Body.Close()
 		elapsed := time.Since(start)
-
-		// Add the response time to the array
-		fmt.Println("Temps de réponse:", elapsed.Milliseconds(), "ms")
 
 		// Add the response time to the array
 		responseTimes = append(responseTimes, elapsed.Milliseconds())
@@ -49,10 +47,9 @@ func main() {
 	}
 	average := sum / int64(len(responseTimes))
 
-	// Show the average response time
-	fmt.Println("Moyenne des temps de réponse:", average, "ms")
+	// Print the average response time
+	fmt.Println("Average response time:", average, "ms")
 
-	// Show the number of requests per second
-	fmt.Println("Nombre de requêtes par seconde:", 1000/average)
-
+	// Print the requests per second
+	fmt.Println("Requests per second:", 1000/average)
 }
