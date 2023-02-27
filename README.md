@@ -25,6 +25,8 @@ The `/blog/admin/updatepost` route is used to update a Post in the database.
 
 The `/blog/admin/deletepost` route is used to delete a Post in the database.
 
+Bonus: The `/benchmark` route is used to test the performance of the application. (A snippet of the http client tool is provided in `/benchmarkClient/benchmarkClient.go`)
+
 
 ## Env variables
 
