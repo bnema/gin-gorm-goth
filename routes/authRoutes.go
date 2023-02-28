@@ -24,7 +24,7 @@ func AuthRoutes(r *gin.Engine) {
 	goth.UseProviders(
 		discord.New(os.Getenv("DISCORD_CLIENT_ID"), os.Getenv("DISCORD_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
 
-		// Add more providers here
+		// Add more providers here (google is not set, just used as example)
 		google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
 	)
 	for _, provider := range goth.GetProviders() {
