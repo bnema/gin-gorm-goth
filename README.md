@@ -12,7 +12,7 @@ The `/auth/login/:provider` route is used to initiate the authentication process
 
 The `/auth/callback` route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID.
 
-The `/auth/logout` route is used to destroy the user's session and remove the session cookie from the user's browser.
+The `/auth/logout` route is used to destroy the user's session, delete it from the database and remove the session cookie from the user's browser.
 
 The `/blog` route return all the Posts in the database as JSON responses.
 
