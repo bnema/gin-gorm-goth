@@ -45,12 +45,14 @@ func AuthRoutes(r *gin.Engine) {
 
 		// json all the providers available
 		c.JSON(http.StatusOK, gin.H{
-			"Providers available": "/" + providerNames[0],
+			"message": "Available providers",
+			// For each provider, we return the name and the url
+			"providers": providerNames,
 		})
 
 	})
 
-	// Static route with the provider name
+	// Dynamic route with the provider name
 	auth.GET("/login/:provider", func(c *gin.Context) {
 		// Get the provider from the url
 		provider := c.Param("provider")
