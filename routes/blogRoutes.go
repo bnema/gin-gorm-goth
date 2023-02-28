@@ -50,7 +50,7 @@ func BlogRoutes(r *gin.Engine) {
 		}
 	})
 	// Create a new post
-	blog.POST("/admin/createpost", services.AuthMiddleware(), func(c *gin.Context) {
+	blog.POST("/admin/create/post", services.AuthMiddleware(), func(c *gin.Context) {
 		// Now we can access the user ID from the context (set in the AuthMiddleware)
 		userID := c.MustGet("userID").(string)
 		userIsAdmin := services.CheckIfUserIsAdmin(userID)
@@ -78,7 +78,7 @@ func BlogRoutes(r *gin.Engine) {
 		}
 	})
 	// Route to update a post
-	blog.POST("/admin/updatepost", services.AuthMiddleware(), func(c *gin.Context) {
+	blog.PUT("/admin/update/post", services.AuthMiddleware(), func(c *gin.Context) {
 		// Now we can access the user ID from the context (set in the AuthMiddleware)
 		userID := c.MustGet("userID").(string)
 		userIsAdmin := services.CheckIfUserIsAdmin(userID)
@@ -107,7 +107,7 @@ func BlogRoutes(r *gin.Engine) {
 	})
 
 	// Delete a post
-	blog.POST("/admin/deletepost", services.AuthMiddleware(), func(c *gin.Context) {
+	blog.DELETE("/admin/delete/post", services.AuthMiddleware(), func(c *gin.Context) {
 		// Now we can access the user ID from the context (set in the AuthMiddleware)
 		userID := c.MustGet("userID").(string)
 		userIsAdmin := services.CheckIfUserIsAdmin(userID)
