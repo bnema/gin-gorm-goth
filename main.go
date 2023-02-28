@@ -12,6 +12,7 @@ import (
 var router = gin.Default()
 
 func getRoutes() {
+
 	routes.AuthRoutes(router)      // Auth routes with Goth and Gothic middleware for Oauth2 authentication
 	routes.BlogRoutes(router)      // Blog routes for testing the database connection
 	routes.BenchmarkRoutes(router) // Benchmark routes for testing the http server performance
@@ -26,6 +27,7 @@ func getRoutes() {
 func main() {
 	// Set the maximum number of CPUs that can be executing simultaneously and the maximum number of idle CPUs.
 	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	config.InitDB() // Initialize database connection
 
 	getRoutes()

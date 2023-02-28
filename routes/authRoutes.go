@@ -3,6 +3,7 @@
 package routes
 
 import (
+	"context"
 	"go-gorm-gauth/services"
 	"net/http"
 	"os"
@@ -13,11 +14,26 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/discord"
+	"github.com/markbates/goth/providers/google"
 )
 
-func AuthRoutes(r *gin.Engine) {
-	auth := r.Group("/auth")
+// Create a slice of provider names
+var providerNames []string
 
+func AuthRoutes(r *gin.Engine) {
+	goth.UseProviders(
+		discord.New(os.Getenv("DISCORD_CLIENT_ID"), os.Getenv("DISCORD_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
+
+		// Add more providers here
+		google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
+	)
+	for _, provider := range goth.GetProviders() {
+		// Append the provider's name to the slice
+		providerNames = append(providerNames, provider.Name())
+	}
+
+	// Auth routes
+	auth := r.Group("/auth")
 	auth.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Auth routes",
@@ -26,16 +42,33 @@ func AuthRoutes(r *gin.Engine) {
 
 	// Initialize authentication process
 	auth.GET("/login", func(c *gin.Context) {
-		// Set providers
-		goth.UseProviders(
-			discord.New(os.Getenv("DISCORD_CLIENT_ID"), os.Getenv("DISCORD_CLIENT_SECRET"), os.Getenv("AUTH_CALLBACK_URL")),
 
-			// Other providers here...
-		)
-		// Start authentication process
-		gothic.BeginAuthHandler(c.Writer, c.Request)
+		// json all the providers available
+		c.JSON(http.StatusOK, gin.H{
+			"Providers available": "/" + providerNames[0],
+		})
 
 	})
+
+	// Static route with the provider name
+	auth.GET("/login/:provider", func(c *gin.Context) {
+		// Get the provider from the url
+		provider := c.Param("provider")
+
+		// Check if the provider exists in the slice
+		for _, name := range providerNames {
+			if name == provider {
+				// If the provider exists, we start the authentication process
+				gothic.BeginAuthHandler(c.Writer, c.Request.WithContext(context.WithValue(c.Request.Context(), "provider", provider)))
+				return
+			}
+		}
+		// If the provider doesn't exist, we return an error
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "Provider not found",
+		})
+	})
+
 	// Logout route (delete session from database and delete cookie)
 	auth.GET("/logout", func(c *gin.Context) {
 		// Get the session token from the cookie
