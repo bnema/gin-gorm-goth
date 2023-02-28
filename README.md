@@ -6,8 +6,9 @@ A Boilerplate in Go with Gin, GORM, and Goth for creating a basic Oauth user aut
 This is a boilerplate codebase created for learning purposes and heavily inspired by NextAuth. It provides basic RESTful API endpoints for user authentication and authorization, using Gin as web/http server library, GORM as the ORM, and Goth/Gothic as the Oauth2 client library. The API supports CRUD operations for managing user accounts,authentication sessions and posts.
 
 ## Routes
+The `/auth/login` list all the available authentication providers. It returns a JSON response with the list of available provider names.
 
-The `/auth/login` route is used to initiate the authentication process, where it sets the authentication providers (in this case, it uses the Discord provider) and starts the authentication process using the "gothic" package.
+The `/auth/login/:provider` route is used to initiate the authentication process, where it sets the authentication providers (in this case, we are using Discord) and starts the authentication process using the "gothic" package.
 
 The `/auth/callback` route is used to complete the authentication process, where it receives the user's authentication details, creates a new user and account in the database, creates a session token, and returns it in a HTTP-only cookie along with the user's session ID.
 
@@ -19,11 +20,11 @@ The `/blog/:title` route returns a single Post in the database as a JSON respons
 
 The `/blog/admin` route is used to test the authentication process and the authMiddleware. It is only accessible to authenticated users AND if isAdmin is set to true. It returns a JSON response indicating that it's the admin route.
 
-The `/blog/admin/createpost` route is used to create a new Post in the database. 
+The `/blog/admin/create/post` (POST) route is used to create a new Post in the database. 
 
-The `/blog/admin/updatepost` route is used to update a Post in the database.
+The `/blog/admin/update/post` (PUT) route is used to update a Post in the database.
 
-The `/blog/admin/deletepost` route is used to delete a Post in the database.
+The `/blog/admin/delete/post` (DELETE) route is used to delete a Post in the database.
 
 Bonus: The `/benchmark` route is used to test the performance of the application. (A snippet of the http client tool is provided in `/benchmarkClient/benchmarkClient.go`)
 
