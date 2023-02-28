@@ -32,8 +32,8 @@ Bonus: The `/benchmark` route is used to test the performance of the application
 ## Env variables
 
 ```
-GIN_MODE=debug
-DOMAIN=localhost
+GIN_MODE=debug # Set to release in production
+DOMAIN=localhost # This is for the cookie domain, set to your domain in production
 PORT=3000
 DATABASE_URL=postgresql://yourname:yourpasswordE@yourPGserver:PORT/yourdb
 SESSION_SECRET=secret
